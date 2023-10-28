@@ -1,12 +1,14 @@
 library(dplyr)
+library(readr)
 library(ggplot2)
-#get library with "gather" function
 library(tidyr)
-library(ggiraph)
 library(scales)
+library(shiny)
+library(ggiraph)
+
 
 # Read the zipped CSV file
-dfp <- read.csv2(unz("pivot-mesas-paso-2023.csv.zip", "pivot-mesas-paso-2023.csv"))
+dfp <- read_csv2("pivot-mesas-paso-2023.csv.zip")
 
 # Extract the province name from the first column
 dfp$province <- as.numeric(substr(dfp$cod_seccion, 1, 2))
@@ -25,7 +27,7 @@ mutate(participacion_paso=votantes)
 
 
 # Read the zipped CSV file
-df <- read.csv2(unz("pivot-mesas-general-2023.csv.zip", "pivot-mesas-general-2023.csv"))
+df <- read_csv2("pivot-mesas-general-2023.csv.zip")
 
 # Extract the province name from the first column
 df$province <- as.numeric(substr(df$cod_seccion, 1, 2))
@@ -75,9 +77,7 @@ df4.dat<-df4 %>%
 df5<-df4 %>% filter(participacion_paso>50 & participacion_general>50 )
 df5 %>% filter(diferencia_participacion < -100) %>% group_by(provincia.x) %>% count()
 
-library(shiny)
-library(ggplot2)
-library(ggiraph)
+
 
 # Define UI
 ui <- fluidPage(
@@ -88,7 +88,7 @@ ui <- fluidPage(
    checkboxInput("participacion", "Filtrar por participación <50 (probables errores):", value = FALSE),
    checkboxGroupInput("provincia", "Seleccione una provincia:", choices = unique(df4$provincia.x), selected = unique(df4$provincia.x)),
    p("Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
-     a("Alejandro Barañek",
+     a("@ken4rab",
        href = "https://twitter.com/ken4rab",
        target = "_blank"), ".",
      "El código de la app será subido pronto a",
