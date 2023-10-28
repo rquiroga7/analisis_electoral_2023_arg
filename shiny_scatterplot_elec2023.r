@@ -81,10 +81,10 @@ library(ggiraph)
 
 # Define UI
 ui <- fluidPage(
- titlePanel("Diferencia de votos PASO vs generales 2023"),
+ titlePanel("Diferencia de votos Generales vs PASO (2023)"),
  sidebarLayout(
   sidebarPanel(
-   selectInput("party", "Seleccione un partido:", choices = unique(df4$party)),
+   selectInput("party", "Seleccione un partido/coalición:", choices = unique(df4$party)),
    checkboxInput("participacion", "Filtrar por participación <50 (probables errores):", value = FALSE),
    checkboxGroupInput("provincia", "Seleccione una provincia:", choices = unique(df4$provincia.x), selected = unique(df4$provincia.x)),
    p("Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
@@ -120,8 +120,8 @@ server <- function(input, output) {
                                                                                                                      "Votos generales: ", votos_generales))) +
    geom_point_interactive(alpha = 0.2) +
    geom_abline(intercept = 0, slope = 1, color = "orange") +
-   ggtitle(paste0(input$party, " - Diferencia de votos PASO vs generales 2023")) +
-   labs(x = "Diferencia participación Generales - PASO", y = "Diferencia votos Generales - PASO")+
+   ggtitle(paste0(input$party, " - Diferencia de votos Generales vs PASO (2023)")) +
+   labs(x = "Diferencia participación ", y = "Diferencia votos")+
    facet_wrap(~party, scales = "fixed") +
    theme_light() +
    theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0))
