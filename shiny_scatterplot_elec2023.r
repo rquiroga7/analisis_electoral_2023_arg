@@ -37,13 +37,16 @@ ui <- fluidPage(
 
 # Define server
 server <- function(input, output) {
- output$scatterplot <- renderGirafe({
+ df4_filtered <- reactive({
   if (input$participacion) {
-   df4_filtered <- df4 %>% filter(party == input$party, Provincia %in% input$provincia, participacion_paso > 50, participacion_general > 50)
+   df4 %>% filter(party == input$party, Provincia %in% input$provincia, participacion_paso > 50, participacion_general > 50)
   } else {
-   df4_filtered <- df4 %>% filter(party == input$party, Provincia %in% input$provincia)
+   df4 %>% filter(party == input$party, Provincia %in% input$provincia)
   }
-  gg <- ggplot(df4_filtered, aes(x = diferencia_participacion, y = diferencia, color = Provincia, tooltip = paste0("Provincia: ", Provincia, "<br>",
+ })
+
+ output$scatterplot <- renderGirafe({
+  gg <- ggplot(df4_filtered(), aes(x = diferencia_participacion, y = diferencia, color = Provincia, tooltip = paste0("Provincia: ", Provincia, "<br>",
                                                                                                                      "Participación PASO: ", participacion_paso, "<br>",
                                                                                                                      "Participación generales: ", participacion_general, "<br>",
                                                                                                                      "Votos PASO: ", votos_PASO, "<br>",
