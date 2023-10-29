@@ -64,5 +64,8 @@ df4 <- df4 %>%
  rename(Provincia=provincia.x) %>%
  ungroup()
 
+df4 <- df4 %>% 
+  mutate(across(where(is.numeric), as.integer))
+
 # Save dataframe to a zipped file
 write_csv(df4, "df4.gz")
