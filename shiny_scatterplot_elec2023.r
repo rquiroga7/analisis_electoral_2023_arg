@@ -29,7 +29,7 @@ ui <- fluidPage(
                # selected = "Todas",
                multiple = T),
    actionButton(inputId = "correr","Graficar selección"),
-   p("Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
+   p("En primer lugar recordar que los datos utilizados son los del escrutinio provisorio que NO TIENE VALIDEZ LEGAL. Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
      a("@ken4rab",
        href = "https://twitter.com/ken4rab",
        target = "_blank"), ".",
