@@ -55,9 +55,7 @@ server <- function(input, output) {
 
   observeEvent(input$correr, {  
     
-    df4_filtered <- reactive({
-      
-      isolate({
+    df4_filtered <- isolate({
            if (input$participacion) {
             df4 %>% filter(party == input$party, Provincia %in% input$provincia,
                           participacion_paso > 50, participacion_general > 50)
@@ -71,13 +69,12 @@ server <- function(input, output) {
              
            }
       })
- })
     
 
   output$scatterplot <- renderGirafe({
     
     
-    gg <- ggplot(df4_filtered(), aes(
+    gg <- ggplot(df4_filtered, aes(
       x = diferencia_participacion,
       y = diferencia,
       color = Provincia,
