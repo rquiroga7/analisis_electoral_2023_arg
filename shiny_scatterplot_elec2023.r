@@ -59,11 +59,6 @@ server <- function(input, output) {
            if (input$participacion) {
             df4 %>% filter(party == input$party, Provincia %in% input$provincia,
                           participacion_paso > 50, participacion_general > 50)
-           # } else if (input$provincia == "Todas" & input$participacion){ 
-           #   df4 %>% filter(party == input$party,
-           #                  participacion_paso > 50, participacion_general > 50)
-           # } else if (input$provincia == "Todas"){
-           #  df4 %>% filter(party == input$party)
            } else {
              df4 %>% filter(party == input$party, Provincia %in% input$provincia)
              
@@ -77,6 +72,7 @@ server <- function(input, output) {
     gg <- ggplot(df4_filtered, aes(
       x = diferencia_participacion,
       y = diferencia,
+      data_id = cod_seccion,
       color = Provincia,
       tooltip = paste0(
         "Provincia: ",
@@ -99,13 +95,15 @@ server <- function(input, output) {
       ))) +
       geom_point_interactive(alpha = 0.2) +
       geom_abline(intercept = 0, slope = 1, color = "orange") +
-      ggtitle(paste0(input$party, " - Diferencia de votos Generales vs PASO (2023)")) +
+      ggtitle(paste0(isolate(input$party), " - Diferencia de votos Generales vs PASO (2023)")) +
       labs(x = "Diferencia participación ", y = "Diferencia votos")+
       # facet_wrap(~party, scales = "fixed") +
       theme_light() +
-      theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0))
+      theme(legend.position = "bottom",
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0))
     
-    girafe(ggobj = gg)
+    girafe(ggobj = gg,
+           options = list(opts_hover(css = "opacity:1;stroke:black;r:4pt;")))
 
 
       })
