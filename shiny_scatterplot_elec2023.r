@@ -16,7 +16,7 @@ ui <- fluidPage(
  titlePanel("Diferencia de votos Generales vs PASO (2023)"),
  sidebarLayout(
   sidebarPanel(
-   p("Tener paciencia, la carga del gráfico puede demorar 60 segundos o más."),
+   p('Seleccionar partido y 1 o más provincias, luego cliquear en "Graficar selección". La carga del gráfico puede demorar 60 segundos o más.'),
    selectInput("party", "Seleccione un partido/coalición:", choices = unique(df4$party)),
    checkboxInput("participacion", "Filtrar por participación <50 (probables errores):", value = FALSE),
    pickerInput("provincia",
@@ -24,12 +24,12 @@ ui <- fluidPage(
                choices = unique(df4$Provincia),
                options = list(`actions-box` = TRUE,
                               `deselect-all-text` = "Limpiar selección",
-                              `select-all-text` = "Todas", 
+                              `select-all-text` = "Todas",
                               `none-selected-text` = "Seleccionar al menos 1 provincia"),
                # selected = "Todas",
                multiple = T),
    actionButton(inputId = "correr","Graficar selección"),
-   p("Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
+   p("En primer lugar recordar que los datos utilizados son los del escrutinio provisorio que NO TIENE VALIDEZ LEGAL. Cada punto representa una mesa. En el eje horizontal se representa la diferencia de votos totales, y en el eje vertical la diferencia de votos para la fuerza política elegida. La fuente de los datos es ",
      a("@ken4rab",
        href = "https://twitter.com/ken4rab",
        target = "_blank"), ".",
@@ -37,21 +37,24 @@ ui <- fluidPage(
      a("Github.",
        href = "https://github.com/rquiroga7/analisis_electoral_2023_arg",
        target = "_blank"), " Código escrito por ",
-          a("Rodrigo Quiroga",
+     a("Rodrigo Quiroga",
        href = "https://twitter.com/rquiroga777",
-       target = "_blank"),". La línea naranja indica donde deberían caer las mesas si todo el aumento de participación resultara en un aumento de votos para esta fuerza. Si las mesas se encuentran por arriba de esta línea, sugiere transferencia de votos de otras fuerzas a ésta, y por debajo indica lo contrario. Se provee una checkbox para filtrar las mesas con participación menor a 50 en PASO o generales. Como los datos son provisorios, puede haber errores de carga de telegramas.")
+       target = "_blank"),". Se agradece enormemente el aporte de ",
+     a("Juan Gabriel Juara",
+       href = "https://github.com/jgjuara",
+       target = "_blank"),
+     ", que introdujo cambios al código que permite el correcto funcionamiento de la app en Shinyapps.io. La línea naranja indica donde deberían caer las mesas si todo el aumento de participación resultara en un aumento de votos para esta fuerza. Si las mesas se encuentran por arriba de esta línea, sugiere transferencia de votos de otras fuerzas a ésta, y por debajo indica lo contrario. Se provee una checkbox para filtrar las mesas con participación menor a 50 en PASO o generales. Como los datos son provisorios, puede haber errores de carga de telegramas.")
   ),
   mainPanel(
-   conditionalPanel(condition = "input.correr > 0", 
-                    girafeOutput("scatterplot") %>% 
-      withSpinner(color="#0dc5c1")
-  ))
+   conditionalPanel(condition = "input.correr > 0",
+                    girafeOutput("scatterplot") %>%
+                     withSpinner(color="#0dc5c1")
+   ))
  )
 )
 
 # Define server
 server <- function(input, output) {
-  
 
   observeEvent(input$correr, {  
     
@@ -95,9 +98,10 @@ server <- function(input, output) {
       ))) +
       geom_point_interactive(alpha = 0.2) +
       geom_abline(intercept = 0, slope = 1, color = "orange") +
+      geom_hline(yintercept = 0, color="black")+
+      geom_vline(xintercept = 0, color="black")+
       ggtitle(paste0(isolate(input$party), " - Diferencia de votos Generales vs PASO (2023)")) +
       labs(x = "Diferencia participación ", y = "Diferencia votos")+
-      # facet_wrap(~party, scales = "fixed") +
       theme_light() +
       theme(legend.position = "bottom",
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0))
@@ -106,9 +110,7 @@ server <- function(input, output) {
            options = list(opts_hover(css = "opacity:1;stroke:black;r:4pt;")))
 
 
-      })
-  
-    
+  })
   })
 }
 
