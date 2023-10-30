@@ -6,6 +6,7 @@ library(ggplot2)
 
 #Generate my own file
 gen <- read_csv("ResultadosElectorales_2023.zip")
+genB<- read_csv("2023_generales.zip")
 gen2<-gen %>%
  filter(cargo_id==1) %>%
  mutate(cod_seccion=paste0(sprintf("%02d", distrito_id),sprintf("%03d", seccion_id),sprintf("%05d", mesa_id),"X")) %>%
@@ -86,5 +87,37 @@ g2023 %>%
 g2023 %>%
  filter(provincia!="Santiago del Estero") %>%
  summarize(JxCp=sum(JxC)/(sum(votantes)-sum(blanco_y_nulo)),LLAp=sum(LLA)/(sum(votantes)-sum(blanco_y_nulo)),UxPp=sum(UxP)/(sum(votantes)-sum(blanco_y_nulo)))
+
+g2023 %>%
+ pivot_longer(cols = c(JxC,UxP,LLA), names_to = "party", values_to = "votos") %>%
+ mutate(votos=votos/votantes) %>%
+ggplot(aes(x = votos)) +
+ theme_light()+
+ ggtitle("Histograma de votos - generales 2023") +
+ geom_histogram(binwidth = 0.01) +
+ geom_histogram(data=g2023 %>%
+                 pivot_longer(cols = c(JxC,UxP,LLA), names_to = "party", values_to = "votos") %>%
+                 mutate(votos=votos/votantes) %>% filter( provincia == "Santiago del Estero" | provincia == "Buenos Aires" ),binwidth = 0.01,fill="green") +
+ geom_histogram(data=g2023 %>%
+                 pivot_longer(cols = c(JxC,UxP,LLA), names_to = "party", values_to = "votos") %>%
+                 mutate(votos=votos/votantes) %>% filter(provincia =="Córdoba" ),binwidth = 0.01,fill="red") +
+ facet_wrap(~party, scales = "fixed") +
+ xlim(0,1)+
+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggsave("histograma_rojo.png", width = 8, height = 5, dpi = 300)
+
+g2023 %>%
+ pivot_longer(cols = c(JxC,UxP,LLA), names_to = "party", values_to = "votos") %>%
+ mutate(votos=votos/votantes) %>%
+ filter(provincia =="CABA" | provincia =="Salta" ) %>%
+ ggplot(aes(x = votos)) +
+ theme_light()+
+ ggtitle("Histograma de votos CABA + Salta- generales 2023") +
+ geom_histogram(binwidth = 0.01) +
+ facet_wrap(~party, scales = "free_y") +
+ xlim(0, 1)+
+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggsave("histograma_salta_caba.png", width = 8, height = 5, dpi = 300)
+
 
 
